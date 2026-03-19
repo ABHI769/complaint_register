@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Receiver Login{% endblock %}
+
+{% block content %}
+  <section class="card card--narrow">
+    <h1 class="h1">Receiver login</h1>
+    <p class="muted">Enter the receiver password to view complaints.</p>
+
+    <form method="post" action="{{ url_for('receiver_login_post') }}" class="form">
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--primary" type="submit">Login</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

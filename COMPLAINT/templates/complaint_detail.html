@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Complaint{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <div class="row row--space">
+      <div>
+        <h1 class="h1">Complaint</h1>
+        <p class="muted">Submitted at {{ complaint["created_at"] }}</p>
+      </div>
+      <div class="row">
+        <a class="btn btn--ghost" href="{{ url_for('receiver_dashboard') }}">Back</a>
+        {% if complaint["status"] == "open" %}
+          <form method="post" action="{{ url_for('receiver_resolve', complaint_id=complaint['id']) }}">
+            <button class="btn btn--primary" type="submit">Mark resolved</button>
+          </form>
+        {% else %}
+          <form method="post" action="{{ url_for('receiver_reopen', complaint_id=complaint['id']) }}">
+            <button class="btn btn--primary" type="submit">Reopen</button>
+          </form>
+          <form method="post" action="{{ url_for('receiver_delete', complaint_id=complaint['id']) }}"
+                onsubmit="return confirm('Delete this resolved complaint permanently?');">
+            <button class="btn" type="submit">Delete</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kv">
+      <div class="kv__item">
+        <div class="kv__k">Status</div>
+        <div class="kv__v"><span class="pill pill--{{ complaint['status'] }}">{{ complaint["status"] }}</span></div>
+      </div>
+      <div class="kv__item">
+        <div class="kv__k">Sender</div>
+        <div class="kv__v">{{ complaint["sender_name"] }}</div>
+      </div>
+      <div class="kv__item">
+        <div class="kv__k">Phone</div>
+        <div class="kv__v">{{ complaint["phone"] }}</div>
+      </div>
+      <div class="kv__item">
+        <div class="kv__k">Area</div>
+        <div class="kv__v">{{ complaint["area"] }}</div>
+      </div>
+      <div class="kv__item">
+        <div class="kv__k">Subject</div>
+        <div class="kv__v">{{ complaint["subject"] }}</div>
+      </div>
+    </div>
+
+    <hr class="sep" />
+
+    <h2 class="h2">Description</h2>
+    <div class="prose">
+      {{ complaint["description"] | e | replace("\n", "<br />") | safe }}
+    </div>
+
+    {% if images and images|length > 0 %}
+      <hr class="sep" />
+      <h2 class="h2">Images</h2>
+      <div class="gallery">
+        {% for img in images %}
+          <a class="thumb" href="{{ url_for('uploaded_file', filename=img['stored_filename']) }}" target="_blank" rel="noreferrer">
+            <img src="{{ url_for('uploaded_file', filename=img['stored_filename']) }}" alt="{{ img['original_filename'] | e }}" />
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
