@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Submit Complaint{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <h1 class="h1">Submit a complaint</h1>
+    <p class="muted">
+      Fill in the details below. The receiver can view your complaint on the receiver dashboard.
+    </p>
+
+    <form method="post" action="{{ url_for('submit_complaint') }}" class="form" enctype="multipart/form-data">
+      <div class="grid">
+        <div class="field">
+          <label for="sender_name">Sender name</label>
+          <input id="sender_name" name="sender_name" required
+                 value="{{ (form.sender_name if form else '') | e }}" />
+        </div>
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input id="phone" name="phone" required placeholder="+91 9876543210"
+                 value="{{ (form.phone if form else '') | e }}" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="area">Area of complaint</label>
+          <input id="area" name="area" required placeholder="e.g., Street light / Water / Road"
+                 value="{{ (form.area if form else '') | e }}" />
+        </div>
+        <div class="field">
+          <label for="subject">Subject</label>
+          <input id="subject" name="subject" required placeholder="Short title of the issue"
+                 value="{{ (form.subject if form else '') | e }}" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="6" required
+                  placeholder="Write full details...">{{ (form.description if form else '') | e }}</textarea>
+      </div>
+
+      <div class="field">
+        <label for="images">Images (optional, up to 3)</label>
+        <input id="images" name="images" type="file" accept="image/*" multiple />
+        <p class="muted small">You can attach up to 3 photos to help verify the issue.</p>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn--primary">Send complaint</button>
+        <a class="btn btn--ghost" href="{{ url_for('receiver_login') }}">I am the receiver</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
