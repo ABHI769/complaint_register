@@ -2,70 +2,68 @@
 {% block title %}Receiver Dashboard{% endblock %}
 
 {% block content %}
-  <section class="card">
-    <div class="row row--space">
-      <div>
-        <h1 class="h1">Receiver dashboard</h1>
-        <p class="muted">View and take action on complaints.</p>
+  <section class="w-full bg-zinc-900 border border-white/10 rounded-xl shadow-sm overflow-hidden">
+    <div class="p-6 sm:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-semibold text-zinc-100">Receiver dashboard</h1>
+          <p class="text-sm text-zinc-400 mt-1">View and take action on complaints.</p>
+        </div>
+        <form method="post" action="{{ url_for('receiver_logout') }}">
+          <button class="px-3 py-2 text-sm rounded-md border border-white/10 text-zinc-100 hover:bg-white/5" type="submit">Logout</button>
+        </form>
       </div>
-      <form method="post" action="{{ url_for('receiver_logout') }}">
-        <button class="btn btn--ghost" type="submit">Logout</button>
-      </form>
-    </div>
 
-    <div class="tabs">
-      <a class="tab {{ 'is-active' if status == 'open' else '' }}" href="{{ url_for('receiver_dashboard', status='open') }}">Open</a>
-      <a class="tab {{ 'is-active' if status == 'resolved' else '' }}" href="{{ url_for('receiver_dashboard', status='resolved') }}">Resolved</a>
-      <a class="tab {{ 'is-active' if status == 'all' else '' }}" href="{{ url_for('receiver_dashboard', status='all') }}">All</a>
-    </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="{{ url_for('receiver_dashboard', status='open') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ 'bg-indigo-600 text-white' if status == 'open' else 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700' }}">Open</a>
+        <a href="{{ url_for('receiver_dashboard', status='resolved') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ 'bg-indigo-600 text-white' if status == 'resolved' else 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700' }}">Resolved</a>
+        <a href="{{ url_for('receiver_dashboard', status='all') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ 'bg-indigo-600 text-white' if status == 'all' else 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700' }}">All</a>
+      </div>
 
-    {% if complaints and complaints|length > 0 %}
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>View</th>
-              <th>Subject</th>
-              <th>Area</th>
-              <th>Images</th>
-              <th>Description</th>
-              <th>Sender</th>
-              <th>Phone</th>
-              <th>Status</th>
-              <th>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in complaints %}
-              <tr>
-                <td><a href="{{ url_for('receiver_detail', complaint_id=c['id']) }}">Open</a></td>
-                <td>{{ c["subject"] }}</td>
-                <td>{{ c["area"] }}</td>
-                <td>
-                  {% if c["image_count"] and c["image_count"] > 0 %}
-                    <span class="pill pill--images">{{ c["image_count"] }} image{% if c["image_count"] != 1 %}s{% endif %}</span>
-                  {% else %}
-                    <span class="muted small">—</span>
-                  {% endif %}
-                </td>
-                <td>
-                  <div class="desc">
-                    {{ (c["description"][:120] ~ ("…" if c["description"]|length > 120 else "")) | e }}
-                  </div>
-                </td>
-                <td>{{ c["sender_name"] }}</td>
-                <td>{{ c["phone"] }}</td>
-                <td><span class="pill pill--{{ c['status'] }}">{{ c["status"] }}</span></td>
-                <td class="muted small">{{ c["created_at"] }}</td>
+      {% if complaints and complaints|length > 0 %}
+        <div class="overflow-x-auto rounded-lg border border-white/10">
+          <table class="min-w-full divide-y divide-white/10 text-sm">
+            <thead class="bg-zinc-950/70">
+              <tr class="text-left text-zinc-400 uppercase tracking-wide text-xs">
+                <th class="px-3 py-2">View</th>
+                <th class="px-3 py-2">Subject</th>
+                <th class="px-3 py-2">Area</th>
+                <th class="px-3 py-2">Images</th>
+                <th class="px-3 py-2">Description</th>
+                <th class="px-3 py-2">Sender</th>
+                <th class="px-3 py-2">Phone</th>
+                <th class="px-3 py-2">Status</th>
+                <th class="px-3 py-2">Created</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <div class="empty">
-        <p class="muted">No complaints found for this filter.</p>
-      </div>
-    {% endif %}
+            </thead>
+            <tbody class="bg-zinc-900 divide-y divide-white/10">
+              {% for c in complaints %}
+                <tr class="hover:bg-zinc-800/40 transition-colors">
+                  <td class="px-3 py-2"><a href="{{ url_for('receiver_detail', complaint_id=c['id']) }}" class="text-indigo-400 hover:text-indigo-200">Open</a></td>
+                  <td class="px-3 py-2 text-zinc-100">{{ c['subject'] }}</td>
+                  <td class="px-3 py-2 text-zinc-100">{{ c['area'] }}</td>
+                  <td class="px-3 py-2">
+                    {% if c['image_count'] and c['image_count'] > 0 %}
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold {{ 'bg-indigo-500/20 text-indigo-200 border border-indigo-400/30' }}">{{ c['image_count'] }} image{% if c['image_count'] != 1 %}s{% endif %}</span>
+                    {% else %}
+                      <span class="text-zinc-500">—</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-3 py-2 text-zinc-200 max-w-[180px] truncate">{{ (c['description'][:120] ~ ('…' if c['description']|length > 120 else '')) | e }}</td>
+                  <td class="px-3 py-2 text-zinc-100">{{ c['sender_name'] }}</td>
+                  <td class="px-3 py-2 text-zinc-100">{{ c['phone'] }}</td>
+                  <td class="px-3 py-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {% if c['status'] == 'open' %}bg-yellow-500/15 text-yellow-200 border border-yellow-400/30{% else %}bg-emerald-500/15 text-emerald-200 border border-emerald-400/30{% endif %}">{{ c['status'] }}</span>
+                  </td>
+                  <td class="px-3 py-2 text-zinc-500 text-xs">{{ c['created_at'] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="bg-zinc-950 border border-white/10 rounded-lg p-4 text-zinc-400">No complaints found for this filter.</div>
+      {% endif %}
+    </div>
   </section>
 {% endblock %}
